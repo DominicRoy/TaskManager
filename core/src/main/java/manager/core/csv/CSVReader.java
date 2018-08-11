@@ -4,9 +4,7 @@ import manager.core.tasks.Task;
 import manager.core.tasks.TaskPriority;
 import manager.core.util.TimeConverter;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +12,23 @@ public class CSVReader implements TimeConverter
 {
     
     private BufferedReader reader;
+    private PrintWriter writer;
+    
+    public void addTaskEntry(String fileName, Task newTask) throws IOException
+    {
+        writer = new PrintWriter(new FileWriter(fileName, true));
+        
+        StringBuilder stringBuilder = new StringBuilder();
+        
+        stringBuilder.append(newTask.getCreationDate().toLocalDateTime()+",");
+        stringBuilder.append(newTask.getDoBeforeDate().toLocalDateTime()+",");
+        stringBuilder.append(newTask.getPriority()+",");
+        stringBuilder.append(newTask.getTaskTitle()+",");
+        stringBuilder.append(newTask.getDescription()+"\n");
+        
+        writer.write(stringBuilder.toString());
+        writer.close();
+    }
     
     public List<Task> readCsv(String fileName) throws IOException
     {
@@ -35,6 +50,7 @@ public class CSVReader implements TimeConverter
                                              taskAttributes[4]).build());
             }
         }
+        reader.close();
         return taskList;
     }
     
