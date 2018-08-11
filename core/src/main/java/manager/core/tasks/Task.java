@@ -10,6 +10,15 @@ public class Task
     private String taskTitle;
     private String description;
     
+    private Task(TaskBuilder builder)
+    {
+        this.doBeforeDate = builder.doBeforeDate;
+        this.creationDate = builder.creationDate;
+        this.description = builder.description;
+        this.taskTitle = builder.taskTitle;
+        this.priority = builder.priority;
+    }
+    
     public DateTime getCreationDate()
     {
         return creationDate;
@@ -42,7 +51,7 @@ public class Task
         private TaskPriority priority;
         private String taskTitle;
         private String description;
-    
+        
         public TaskBuilder(DateTime creationDate, DateTime doBeforeDate, TaskPriority priority, String taskTitle, String description)
         {
             this.creationDate = creationDate;
@@ -56,15 +65,6 @@ public class Task
         {
             return new Task(this);
         }
-    }
-    
-    private Task(TaskBuilder builder)
-    {
-        this.doBeforeDate = builder.doBeforeDate;
-        this.creationDate = builder.creationDate;
-        this.description = builder.description;
-        this.taskTitle = builder.taskTitle;
-        this.priority = builder.priority;
     }
     
 }
