@@ -33,23 +33,6 @@ public class TaskManagerApplication extends Application
     public static void main(String[] args)
     {
         launch(args);
-        
-//        CSVReader reader = new CSVReader();
-//        try
-//        {
-//
-//            List<Task> tasks = reader.readCsv("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv");
-//            tasks.forEach(task -> {
-//                System.out.println(
-//                        task.getTaskTitle() + task.getPriority() + task.getDescription() + task.getCreationDate() +
-//                        task.getDoBeforeDate());
-//            });
-//            reader.addTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", tasks.get(0));
-//        } catch (IOException e)
-//        {
-//            System.out.println("Try again");
-//            e.printStackTrace();
-//        }
     }
     
 }
