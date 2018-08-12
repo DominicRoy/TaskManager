@@ -44,6 +44,11 @@ public class Task
         return description;
     }
     
+    public String getCsvFormattedTask()
+    {
+        return getCreationDate()+","+getDoBeforeDate()+","+getPriority()+","+getTaskTitle()+","+getDescription();
+    }
+    
     public static class TaskBuilder
     {
         private DateTime creationDate;

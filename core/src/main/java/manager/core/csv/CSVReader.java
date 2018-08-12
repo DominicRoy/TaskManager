@@ -30,6 +30,28 @@ public class CSVReader implements TimeConverter
         writer.close();
     }
     
+    public void deleteTaskEntry(String fileName, String taskTitle) throws IOException
+    {
+        List<Task> tasks = readCsv(fileName);
+        List<Task> modifiedList = new ArrayList<>();
+        for(Task task : tasks)
+        {
+            if(!task.getTaskTitle().equals(taskTitle))
+            {
+                modifiedList.add(task);
+            }
+        }
+        StringBuilder builder = new StringBuilder();
+    
+        modifiedList.forEach(task -> {
+            builder.append(task.getCsvFormattedTask()+"\n");
+        });
+        
+        writer = new PrintWriter(new FileWriter(fileName));
+        writer.write(builder.toString());
+        writer.close();
+    }
+    
     public List<Task> readCsv(String fileName) throws IOException
     {
         reader = new BufferedReader(new FileReader(fileName));

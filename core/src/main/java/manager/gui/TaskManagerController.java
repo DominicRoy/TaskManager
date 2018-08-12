@@ -21,7 +21,7 @@ public class TaskManagerController implements TimeConverter
     private ListView<String> taskList;
     
     @FXML
-    private Button addEntryButton, displayTasksButton;
+    private Button addEntryButton, displayTasksButton, deleteEntryButton;
     
     @FXML
     private TextField startDateField, endDateField, titleField, priorityField, descriptionField;
@@ -43,6 +43,17 @@ public class TaskManagerController implements TimeConverter
                 
                 refreshTaskList();
             } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        });
+        
+        deleteEntryButton.setOnAction(action -> {
+            try{
+                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", "New Title");
+                refreshTaskList();
+            }
+            catch(IOException e)
             {
                 e.printStackTrace();
             }
