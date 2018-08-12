@@ -5,13 +5,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.security.InvalidParameterException;
+import java.text.ParseException;
+import java.util.IllegalFormatConversionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public interface TimeConverter
 {
-    
-    default DateTime stringToTimestamp(String timestamp) throws InvalidParameterException
+    default DateTime stringToTimestamp(String timestamp) throws IllegalArgumentException
     {
         String date;
         String time;
@@ -21,7 +22,7 @@ public interface TimeConverter
         Matcher dateMatcher = datePattern.matcher(timestamp);
         Pattern timePattern = Pattern.compile("^.*(\\d{2}:\\d{2}:\\d{2}).*");
         Matcher timeMatcher = timePattern.matcher(timestamp);
-    
+        
         if (dateMatcher.find() && timeMatcher.find())
         {
             date = dateMatcher.group(1);
@@ -29,12 +30,11 @@ public interface TimeConverter
         }
         else
         {
-            throw new InvalidParameterException();
+            throw new IllegalArgumentException();
         }
-    
+        
         timestamp = date + " " + time;
         
         return formatter.parseDateTime(timestamp);
     }
-    
 }
