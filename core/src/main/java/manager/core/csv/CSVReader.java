@@ -3,6 +3,8 @@ package manager.core.csv;
 import manager.core.tasks.Task;
 import manager.core.tasks.TaskPriority;
 import manager.core.util.TimeConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.List;
 
 public class CSVReader implements TimeConverter
 {
-    
+    private static final Logger LOG = LoggerFactory.getLogger(CSVReader.class);
     private BufferedReader reader;
     private PrintWriter writer;
     
@@ -72,10 +74,20 @@ public class CSVReader implements TimeConverter
             
             if (taskAttributes.length > 0)
             {
+                String description = "";
+                try
+                {
+                    description = taskAttributes[4];
+                }
+                catch(ArrayIndexOutOfBoundsException e)
+                {
+                    LOG.debug("Description field is empty for the task under analysis");
+                }
+                
                 taskList.add(
                         new Task.TaskBuilder(stringToTimestamp(taskAttributes[0]), stringToTimestamp(taskAttributes[1]),
                                              TaskPriority.valueOf(taskAttributes[2]), taskAttributes[3],
-                                             taskAttributes[4]).build());
+                                             description).build());
             }
         }
         reader.close();

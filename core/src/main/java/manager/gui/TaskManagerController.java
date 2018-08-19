@@ -2,7 +2,6 @@ package manager.gui;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -64,9 +63,10 @@ public class TaskManagerController implements TimeConverter
             
             
             if (titleField.getText()
-                          .isEmpty() || descriptionField.getText()
-                                                        .isEmpty() || titleField.getText().matches("(.*)[,*^<>?{}\\-|/](.*)")
-                    || descriptionField.getText().matches("(.*)[,*^<>?{}\\-|/](.*)"))
+                          .isEmpty() || titleField.getText()
+                                                  .matches("(.*)[,*^<>?{}\\-|/](.*)")
+                || descriptionField.getText()
+                                   .matches("(.*)[,*^<>?{}\\-|/](.*)"))
             {
                 action.consume();
             } else
@@ -75,13 +75,15 @@ public class TaskManagerController implements TimeConverter
                 {
                     reader.addTaskEntry
                             ("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
-                                        new Task.TaskBuilder(stringToTimestamp(DateTime.now().toString("yyyy-MM-dd HH:mm:ss")),
-                                                             stringToTimestamp(DateTime.now().toString("yyyy-MM-dd HH:mm:ss")),
-                                                             TaskPriority.valueOf(priorityTypeDropdown
-                                                                                          .getSelectionModel()
-                                                                                                      .getSelectedItem()),
-                                                             titleField.getText(),
-                                                             descriptionField.getText()).build());
+                             new Task.TaskBuilder(stringToTimestamp(DateTime.now()
+                                                                            .toString("yyyy-MM-dd HH:mm:ss")),
+                                                  stringToTimestamp(DateTime.now()
+                                                                            .toString("yyyy-MM-dd HH:mm:ss")),
+                                                  TaskPriority.valueOf(priorityTypeDropdown
+                                                                               .getSelectionModel()
+                                                                               .getSelectedItem()),
+                                                  titleField.getText(),
+                                                  descriptionField.getText()).build());
                     
                     refreshTaskList();
                 } catch (IOException e)
@@ -105,7 +107,8 @@ public class TaskManagerController implements TimeConverter
                     String selectedTask = taskList.getSelectionModel()
                                                   .getSelectedItem();
                     
-                    Pattern pattern = Pattern.compile("(Title: ([A-z0-9'\".$#@!%&();_=+]* )*([A-z0-9'\".$#@!%&();_=+]*))(,(.*))");
+                    Pattern pattern = Pattern.compile("(Title: ([A-z0-9'\".$#@!%&();_=+]* )*([A-z0-9'\".$#@!%&();" +
+                                                      "_=+]*))(,(.*))");
                     Matcher matcher = pattern.matcher(selectedTask);
                     
                     matcher.find();
