@@ -2,6 +2,7 @@ package manager.gui;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,6 +32,9 @@ public class TaskManagerController implements TimeConverter
     
     @FXML
     private JFXComboBox<String> priorityTypeDropdown;
+    
+    @FXML
+    private JFXTextField deleteByTitleField;
     
     @FXML
     private TextField titleField, descriptionField;
@@ -67,7 +71,7 @@ public class TaskManagerController implements TimeConverter
         
         deleteEntryButton.setOnAction(action -> {
             try{
-                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", "New Title");
+                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", deleteByTitleField.getText());
                 refreshTaskList();
             }
             catch(IOException e)
