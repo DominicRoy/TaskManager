@@ -14,6 +14,7 @@ import manager.core.csv.CSVReader;
 import manager.core.tasks.Task;
 import manager.core.tasks.TaskPriority;
 import manager.core.util.TimeConverter;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -34,9 +35,6 @@ public class TaskManagerController implements TimeConverter
     
     @FXML
     private JFXComboBox<String> priorityTypeDropdown;
-    
-    @FXML
-    private JFXTextField deleteByTitleField;
     
     @FXML
     private TextField titleField, descriptionField;
@@ -67,7 +65,8 @@ public class TaskManagerController implements TimeConverter
             
             if (titleField.getText()
                           .isEmpty() || descriptionField.getText()
-                                                        .isEmpty())
+                                                        .isEmpty() || titleField.getText().matches("(.*)[,*^<>?{}\\-|/](.*)")
+                    || descriptionField.getText().matches("(.*)[,*^<>?{}\\-|/](.*)"))
             {
                 action.consume();
             } else
@@ -76,11 +75,8 @@ public class TaskManagerController implements TimeConverter
                 {
                     reader.addTaskEntry
                             ("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
-                                        new Task.TaskBuilder(stringToTimestamp(startDatePicker.getValue()
-                                                                                              .toString() +
-                                                                               " 00:00:00"),
-                                                             stringToTimestamp(endDatePicker.getValue()
-                                                                                            .toString() + " 00:00:00"),
+                                        new Task.TaskBuilder(stringToTimestamp(DateTime.now().toString("yyyy-MM-dd HH:mm:ss")),
+                                                             stringToTimestamp(DateTime.now().toString("yyyy-MM-dd HH:mm:ss")),
                                                              TaskPriority.valueOf(priorityTypeDropdown
                                                                                           .getSelectionModel()
                                                                                                       .getSelectedItem()),
@@ -109,7 +105,7 @@ public class TaskManagerController implements TimeConverter
                     String selectedTask = taskList.getSelectionModel()
                                                   .getSelectedItem();
                     
-                    Pattern pattern = Pattern.compile("(Title: ([A-z0-9'\".$#@!%&();]* )*([A-z0-9'\".$#@!%&();]*))(,(.*))");
+                    Pattern pattern = Pattern.compile("(Title: ([A-z0-9'\".$#@!%&();_=+]* )*([A-z0-9'\".$#@!%&();_=+]*))(,(.*))");
                     Matcher matcher = pattern.matcher(selectedTask);
                     
                     matcher.find();
