@@ -18,6 +18,8 @@ import manager.core.util.TimeConverter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TaskManagerController implements TimeConverter
 {
@@ -79,7 +81,15 @@ public class TaskManagerController implements TimeConverter
         
         deleteEntryButton.setOnAction(action -> {
             try{
-                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", deleteByTitleField.getText());
+                String selectedTask = taskList.getSelectionModel().getSelectedItem();
+                
+                // TODO: fix this regex to allow special characters (',:,$,etc.)
+                Pattern pattern = Pattern.compile("(Title: ([A-z]* )*([A-z]*))(,(.*))");
+                Matcher matcher = pattern.matcher(selectedTask);
+                
+                String title = matcher.group(1).substring(7,matcher.group(1).length());
+                
+                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", title);
                 refreshTaskList();
             }
             catch(IOException e)
@@ -103,7 +113,7 @@ public class TaskManagerController implements TimeConverter
                 reader.readCsv("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv")
                       .forEach(task -> {
                           observableStrings.add(
-                                  "Title: " + task.getTaskTitle() + "Start Time: " + task.getCreationDate());
+                                  "Title: " + task.getTaskTitle() + ", Start Time: " + task.getCreationDate());
                       });
                 taskList.getItems().setAll(observableStrings);
             } catch (IOException e)
