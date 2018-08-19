@@ -20,11 +20,13 @@ public class CSVReader implements TimeConverter
         
         StringBuilder stringBuilder = new StringBuilder();
         
-        stringBuilder.append(newTask.getCreationDate().toLocalDateTime()+",");
-        stringBuilder.append(newTask.getDoBeforeDate().toLocalDateTime()+",");
-        stringBuilder.append(newTask.getPriority()+",");
-        stringBuilder.append(newTask.getTaskTitle()+",");
-        stringBuilder.append(newTask.getDescription()+"\n");
+        stringBuilder.append(newTask.getCreationDate()
+                                    .toLocalDateTime() + ",");
+        stringBuilder.append(newTask.getDoBeforeDate()
+                                    .toLocalDateTime() + ",");
+        stringBuilder.append(newTask.getPriority() + ",");
+        stringBuilder.append(newTask.getTaskTitle() + ",");
+        stringBuilder.append(newTask.getDescription() + "\n");
         
         writer.write(stringBuilder.toString());
         writer.close();
@@ -34,17 +36,18 @@ public class CSVReader implements TimeConverter
     {
         List<Task> tasks = readCsv(fileName);
         List<Task> modifiedList = new ArrayList<>();
-        for(Task task : tasks)
+        for (Task task : tasks)
         {
-            if(!task.getTaskTitle().equals(taskTitle))
+            if (!task.getTaskTitle()
+                     .equals(taskTitle))
             {
                 modifiedList.add(task);
             }
         }
         StringBuilder builder = new StringBuilder();
-    
+        
         modifiedList.forEach(task -> {
-            builder.append(task.getCsvFormattedTask()+"\n");
+            builder.append(task.getCsvFormattedTask() + "\n");
         });
         
         writer = new PrintWriter(new FileWriter(fileName));
@@ -63,6 +66,9 @@ public class CSVReader implements TimeConverter
         while ((line = reader.readLine()) != null)
         {
             String[] taskAttributes = line.split(",");
+            
+            
+            // TODO: fix this method so that misentries or a lack of entries won't break the application
             
             if (taskAttributes.length > 0)
             {

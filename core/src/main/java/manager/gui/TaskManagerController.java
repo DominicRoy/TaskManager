@@ -70,28 +70,30 @@ public class TaskManagerController implements TimeConverter
                                                         .isEmpty())
             {
                 action.consume();
-            }
-            else
+            } else
             {
                 try
                 {
-                    reader.addTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
+                    reader.addTaskEntry
+                            ("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
                                         new Task.TaskBuilder(stringToTimestamp(startDatePicker.getValue()
-                                                                                              .toString() + " 00:00:00"),
+                                                                                              .toString() +
+                                                                               " 00:00:00"),
                                                              stringToTimestamp(endDatePicker.getValue()
                                                                                             .toString() + " 00:00:00"),
-                                                             TaskPriority.valueOf(priorityTypeDropdown.getSelectionModel()
+                                                             TaskPriority.valueOf(priorityTypeDropdown
+                                                                                          .getSelectionModel()
                                                                                                       .getSelectedItem()),
                                                              titleField.getText(),
                                                              descriptionField.getText()).build());
-        
+                    
                     refreshTaskList();
                 } catch (IOException e)
                 {
                     e.printStackTrace();
                 }
             }
-
+            
         });
         
         deleteEntryButton.setOnAction(action -> {
@@ -100,24 +102,24 @@ public class TaskManagerController implements TimeConverter
                         .getSelectedIndex() == -1)
             {
                 action.consume();
-            }
-            else
+            } else
             {
                 try
                 {
                     String selectedTask = taskList.getSelectionModel()
                                                   .getSelectedItem();
-        
-                    // TODO: fix this regex to allow special characters (',:,$,etc.)
-                    Pattern pattern = Pattern.compile("(Title: ([A-z]* )*([A-z]*))(,(.*))");
+                    
+                    Pattern pattern = Pattern.compile("(Title: ([A-z0-9'\".$#@!%&();]* )*([A-z0-9'\".$#@!%&();]*))(,(.*))");
                     Matcher matcher = pattern.matcher(selectedTask);
-        
+                    
                     matcher.find();
                     String title = matcher.group(1)
                                           .substring(7, matcher.group(1)
                                                                .length());
-        
-                    reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", title);
+                    
+                    reader.deleteTaskEntry
+                            ("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
+                             title);
                     refreshTaskList();
                 } catch (IOException e)
                 {
