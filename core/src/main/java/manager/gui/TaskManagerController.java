@@ -1,5 +1,8 @@
 package manager.gui;
 
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +16,7 @@ import manager.core.tasks.TaskPriority;
 import manager.core.util.TimeConverter;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 public class TaskManagerController implements TimeConverter
 {
@@ -24,20 +28,37 @@ public class TaskManagerController implements TimeConverter
     private Button addEntryButton, displayTasksButton, deleteEntryButton;
     
     @FXML
-    private TextField startDateField, endDateField, titleField, priorityField, descriptionField;
+    private JFXDatePicker startDatePicker, endDatePicker;
+    
+    @FXML
+    private JFXComboBox<String> priorityTypeDropdown;
+    
+    @FXML
+    private JFXTextField deleteByTitleField;
+    
+    @FXML
+    private TextField titleField, descriptionField;
     
     private CSVReader reader = new CSVReader();
     
     @FXML
     private void initialize()
     {
+        
+        ObservableList<String> priorityType = FXCollections.observableArrayList();
+        for(TaskPriority priority : TaskPriority.values())
+        {
+            priorityType.add(priority.toString());
+        }
+        priorityTypeDropdown.setItems(priorityType);
+        priorityTypeDropdown.getSelectionModel().select(0);
         addEntryButton.setOnAction(action -> {
             try
             {
                 reader.addTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
-                                    new Task.TaskBuilder(stringToTimestamp(startDateField.getText()),
-                                                         stringToTimestamp(endDateField.getText()),
-                                                         TaskPriority.valueOf(priorityField.getText()),
+                                    new Task.TaskBuilder(stringToTimestamp(startDatePicker.getValue().toString()+" 00:00:00"),
+                                                         stringToTimestamp(endDatePicker.getValue().toString()+" 00:00:00"),
+                                                         TaskPriority.valueOf(priorityTypeDropdown.getSelectionModel().getSelectedItem()),
                                                          titleField.getText(),
                                                          descriptionField.getText()).build());
                 
@@ -50,7 +71,7 @@ public class TaskManagerController implements TimeConverter
         
         deleteEntryButton.setOnAction(action -> {
             try{
-                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", "New Title");
+                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", deleteByTitleField.getText());
                 refreshTaskList();
             }
             catch(IOException e)
