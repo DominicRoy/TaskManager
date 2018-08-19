@@ -17,7 +17,6 @@ import manager.core.util.TimeConverter;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,50 +50,79 @@ public class TaskManagerController implements TimeConverter
         descriptionField.setPromptText("What to do?");
         
         ObservableList<String> priorityType = FXCollections.observableArrayList();
-        for(TaskPriority priority : TaskPriority.values())
+        for (TaskPriority priority : TaskPriority.values())
         {
             priorityType.add(priority.toString());
         }
         
         priorityTypeDropdown.setItems(priorityType);
-        priorityTypeDropdown.getSelectionModel().select(0);
+        priorityTypeDropdown.getSelectionModel()
+                            .select(0);
         
         startDatePicker.setValue(LocalDate.now());
         endDatePicker.setValue(LocalDate.now());
         
         addEntryButton.setOnAction(action -> {
-            try
+            
+            
+            if (titleField.getText()
+                          .isEmpty() || descriptionField.getText()
+                                                        .isEmpty())
             {
-                reader.addTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
-                                    new Task.TaskBuilder(stringToTimestamp(startDatePicker.getValue().toString()+" 00:00:00"),
-                                                         stringToTimestamp(endDatePicker.getValue().toString()+" 00:00:00"),
-                                                         TaskPriority.valueOf(priorityTypeDropdown.getSelectionModel().getSelectedItem()),
-                                                         titleField.getText(),
-                                                         descriptionField.getText()).build());
-                
-                refreshTaskList();
-            } catch (IOException e)
-            {
-                e.printStackTrace();
+                action.consume();
             }
+            else
+            {
+                try
+                {
+                    reader.addTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
+                                        new Task.TaskBuilder(stringToTimestamp(startDatePicker.getValue()
+                                                                                              .toString() + " 00:00:00"),
+                                                             stringToTimestamp(endDatePicker.getValue()
+                                                                                            .toString() + " 00:00:00"),
+                                                             TaskPriority.valueOf(priorityTypeDropdown.getSelectionModel()
+                                                                                                      .getSelectedItem()),
+                                                             titleField.getText(),
+                                                             descriptionField.getText()).build());
+        
+                    refreshTaskList();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
         });
         
         deleteEntryButton.setOnAction(action -> {
-            try{
-                String selectedTask = taskList.getSelectionModel().getSelectedItem();
-                
-                // TODO: fix this regex to allow special characters (',:,$,etc.)
-                Pattern pattern = Pattern.compile("(Title: ([A-z]* )*([A-z]*))(,(.*))");
-                Matcher matcher = pattern.matcher(selectedTask);
-                
-                String title = matcher.group(1).substring(7,matcher.group(1).length());
-                
-                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", title);
-                refreshTaskList();
-            }
-            catch(IOException e)
+            
+            if (taskList.getSelectionModel()
+                        .getSelectedIndex() == -1)
             {
-                e.printStackTrace();
+                action.consume();
+            }
+            else
+            {
+                try
+                {
+                    String selectedTask = taskList.getSelectionModel()
+                                                  .getSelectedItem();
+        
+                    // TODO: fix this regex to allow special characters (',:,$,etc.)
+                    Pattern pattern = Pattern.compile("(Title: ([A-z]* )*([A-z]*))(,(.*))");
+                    Matcher matcher = pattern.matcher(selectedTask);
+        
+                    matcher.find();
+                    String title = matcher.group(1)
+                                          .substring(7, matcher.group(1)
+                                                               .length());
+        
+                    reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", title);
+                    refreshTaskList();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
         
@@ -105,7 +133,8 @@ public class TaskManagerController implements TimeConverter
     private void refreshTaskList()
     {
         Platform.runLater(() -> {
-            taskList.getItems().setAll(FXCollections.observableArrayList());
+            taskList.getItems()
+                    .setAll(FXCollections.observableArrayList());
             
             ObservableList<String> observableStrings = FXCollections.observableArrayList();
             try
@@ -115,7 +144,8 @@ public class TaskManagerController implements TimeConverter
                           observableStrings.add(
                                   "Title: " + task.getTaskTitle() + ", Start Time: " + task.getCreationDate());
                       });
-                taskList.getItems().setAll(observableStrings);
+                taskList.getItems()
+                        .setAll(observableStrings);
             } catch (IOException e)
             {
                 e.printStackTrace();
