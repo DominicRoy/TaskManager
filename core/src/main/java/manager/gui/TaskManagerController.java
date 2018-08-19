@@ -2,7 +2,6 @@ package manager.gui;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,10 +13,12 @@ import manager.core.csv.CSVReader;
 import manager.core.tasks.Task;
 import manager.core.tasks.TaskPriority;
 import manager.core.util.TimeConverter;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TaskManagerController implements TimeConverter
 {
@@ -35,9 +36,6 @@ public class TaskManagerController implements TimeConverter
     private JFXComboBox<String> priorityTypeDropdown;
     
     @FXML
-    private JFXTextField deleteByTitleField;
-    
-    @FXML
     private TextField titleField, descriptionField;
     
     private CSVReader reader = new CSVReader();
@@ -49,42 +47,83 @@ public class TaskManagerController implements TimeConverter
         descriptionField.setPromptText("What to do?");
         
         ObservableList<String> priorityType = FXCollections.observableArrayList();
-        for(TaskPriority priority : TaskPriority.values())
+        for (TaskPriority priority : TaskPriority.values())
         {
             priorityType.add(priority.toString());
         }
         
         priorityTypeDropdown.setItems(priorityType);
-        priorityTypeDropdown.getSelectionModel().select(0);
+        priorityTypeDropdown.getSelectionModel()
+                            .select(0);
         
         startDatePicker.setValue(LocalDate.now());
         endDatePicker.setValue(LocalDate.now());
         
         addEntryButton.setOnAction(action -> {
-            try
+            
+            
+            if (titleField.getText()
+                          .isEmpty() || titleField.getText()
+                                                  .matches("(.*)[,*^<>?{}\\-|/](.*)")
+                || descriptionField.getText()
+                                   .matches("(.*)[,*^<>?{}\\-|/](.*)"))
             {
-                reader.addTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
-                                    new Task.TaskBuilder(stringToTimestamp(startDatePicker.getValue().toString()+" 00:00:00"),
-                                                         stringToTimestamp(endDatePicker.getValue().toString()+" 00:00:00"),
-                                                         TaskPriority.valueOf(priorityTypeDropdown.getSelectionModel().getSelectedItem()),
-                                                         titleField.getText(),
-                                                         descriptionField.getText()).build());
-                
-                refreshTaskList();
-            } catch (IOException e)
+                action.consume();
+            } else
             {
-                e.printStackTrace();
+                try
+                {
+                    reader.addTaskEntry
+                            ("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
+                             new Task.TaskBuilder(stringToTimestamp(DateTime.now()
+                                                                            .toString("yyyy-MM-dd HH:mm:ss")),
+                                                  stringToTimestamp(DateTime.now()
+                                                                            .toString("yyyy-MM-dd HH:mm:ss")),
+                                                  TaskPriority.valueOf(priorityTypeDropdown
+                                                                               .getSelectionModel()
+                                                                               .getSelectedItem()),
+                                                  titleField.getText(),
+                                                  descriptionField.getText()).build());
+                    
+                    refreshTaskList();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
+            
         });
         
         deleteEntryButton.setOnAction(action -> {
-            try{
-                reader.deleteTaskEntry("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv", deleteByTitleField.getText());
-                refreshTaskList();
-            }
-            catch(IOException e)
+            
+            if (taskList.getSelectionModel()
+                        .getSelectedIndex() == -1)
             {
-                e.printStackTrace();
+                action.consume();
+            } else
+            {
+                try
+                {
+                    String selectedTask = taskList.getSelectionModel()
+                                                  .getSelectedItem();
+                    
+                    Pattern pattern = Pattern.compile("(Title: ([A-z0-9'\".$#@!%&();_=+]* )*([A-z0-9'\".$#@!%&();" +
+                                                      "_=+]*))(,(.*))");
+                    Matcher matcher = pattern.matcher(selectedTask);
+                    
+                    matcher.find();
+                    String title = matcher.group(1)
+                                          .substring(7, matcher.group(1)
+                                                               .length());
+                    
+                    reader.deleteTaskEntry
+                            ("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv",
+                             title);
+                    refreshTaskList();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
         
@@ -95,7 +134,8 @@ public class TaskManagerController implements TimeConverter
     private void refreshTaskList()
     {
         Platform.runLater(() -> {
-            taskList.getItems().setAll(FXCollections.observableArrayList());
+            taskList.getItems()
+                    .setAll(FXCollections.observableArrayList());
             
             ObservableList<String> observableStrings = FXCollections.observableArrayList();
             try
@@ -103,9 +143,10 @@ public class TaskManagerController implements TimeConverter
                 reader.readCsv("C:\\Users\\Dico\\IdeaProjects\\TaskManager\\TaskStorage\\PrototypeStorageFile.csv")
                       .forEach(task -> {
                           observableStrings.add(
-                                  "Title: " + task.getTaskTitle() + "Start Time: " + task.getCreationDate());
+                                  "Title: " + task.getTaskTitle() + ", Start Time: " + task.getCreationDate());
                       });
-                taskList.getItems().setAll(observableStrings);
+                taskList.getItems()
+                        .setAll(observableStrings);
             } catch (IOException e)
             {
                 e.printStackTrace();
