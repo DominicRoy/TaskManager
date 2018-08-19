@@ -30,7 +30,7 @@
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
                   <TextField fx:id="titleField" />
-                  <JFXComboBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                  <JFXComboBox fx:id="priorityTypeDropdown" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                   <JFXDatePicker fx:id="startDatePicker" />
                   <JFXDatePicker fx:id="endDatePicker" />
                   <TextField fx:id="descriptionField" />

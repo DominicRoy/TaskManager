@@ -16,6 +16,7 @@ import manager.core.tasks.TaskPriority;
 import manager.core.util.TimeConverter;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class TaskManagerController implements TimeConverter
@@ -25,7 +26,7 @@ public class TaskManagerController implements TimeConverter
     private ListView<String> taskList;
     
     @FXML
-    private Button addEntryButton, displayTasksButton, deleteEntryButton;
+    private Button addEntryButton, deleteEntryButton;
     
     @FXML
     private JFXDatePicker startDatePicker, endDatePicker;
@@ -44,14 +45,21 @@ public class TaskManagerController implements TimeConverter
     @FXML
     private void initialize()
     {
+        titleField.setPromptText("New Task");
+        descriptionField.setPromptText("What to do?");
         
         ObservableList<String> priorityType = FXCollections.observableArrayList();
         for(TaskPriority priority : TaskPriority.values())
         {
             priorityType.add(priority.toString());
         }
+        
         priorityTypeDropdown.setItems(priorityType);
         priorityTypeDropdown.getSelectionModel().select(0);
+        
+        startDatePicker.setValue(LocalDate.now());
+        endDatePicker.setValue(LocalDate.now());
+        
         addEntryButton.setOnAction(action -> {
             try
             {
