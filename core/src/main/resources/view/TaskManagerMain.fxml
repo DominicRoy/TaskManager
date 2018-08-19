@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDatePicker?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -11,36 +14,30 @@
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0">
                <children>
-                  <Label text="Start Date" />
-                  <TextField fx:id="startDateField" />
-               </children>
-            </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <Label text="End Date" />
-                  <TextField fx:id="endDateField" />
-               </children>
-            </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <Label text="Title" />
-                  <TextField fx:id="titleField" />
-               </children>
-            </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0">
-               <children>
+                  <Label text="Title">
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin></Label>
                   <Label text="Priority" />
-                  <TextField fx:id="priorityField" />
+                  <Label text="Start Date" />
+                  <Label text="End Date" />
+                  <Label text="Description (opt.)" />
                </children>
             </VBox>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label text="Description (opt.)" />
+                  <TextField fx:id="titleField" />
+                  <JFXComboBox fx:id="priorityTypeDropdown" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                  <JFXDatePicker fx:id="startDatePicker"/>
+                  <JFXDatePicker fx:id="endDatePicker"/>
                   <TextField fx:id="descriptionField" />
                </children>
             </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" />
+            <VBox prefHeight="200.0" prefWidth="100.0" />
+            <VBox prefHeight="200.0" prefWidth="100.0" />
             <VBox>
                <children>
                   <Button fx:id="addEntryButton" mnemonicParsing="false" text="Add Entry" />
